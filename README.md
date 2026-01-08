@@ -89,3 +89,44 @@ The script provides detailed statistics for each test:
 - Status code distribution
 
 At the end, a comparison table shows all test results side-by-side.
+
+## Maximum Concurrency Testing
+
+Use `measure_max_concurrency.py` to find the maximum concurrency limit that the API can handle.
+
+### Binary Search Method (Fast)
+
+Uses binary search to quickly find the maximum concurrency:
+```bash
+python measure_max_concurrency.py --method binary --requests 100 --max 10000
+```
+
+### Linear Search Method (Detailed)
+
+Tests each concurrency level sequentially for detailed analysis:
+```bash
+python measure_max_concurrency.py --method linear --requests 50 --start 1 --max 1000 --step 10
+```
+
+### Options
+
+- `--endpoint`: API endpoint to test (default: `search/`)
+- `--requests`: Number of requests per test (default: 100)
+- `--start`: Starting concurrency level (default: 1)
+- `--max`: Maximum concurrency to test (default: 10000)
+- `--step`: Step size for linear search (default: 10)
+- `--threshold`: Success rate threshold percentage (default: 95.0)
+- `--timeout`: Request timeout in seconds (default: 30)
+- `--method`: Search method - `binary` (fast) or `linear` (detailed) (default: binary)
+- `--stop-on-failure`: Stop linear search on first failure
+- `--verbose`: Show detailed results for each test
+
+### Example: Find Maximum Concurrency
+
+```bash
+# Quick binary search
+python measure_max_concurrency.py --method binary --requests 200 --max 5000
+
+# Detailed linear search with stopping on failure
+python measure_max_concurrency.py --method linear --requests 100 --start 1 --max 2000 --step 50 --stop-on-failure
+```
