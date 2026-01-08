@@ -48,7 +48,7 @@ class TestSummary:
 class CourtListenerAPITester:
     """Tests CourtListener API with various concurrency and RPS parameters"""
     
-    BASE_URL = "https://www.courtlistener.com/api/rest/v3"
+    BASE_URL = "https://www.courtlistener.com/api/rest/v4"
     
     def __init__(self, api_key: str):
         self.api_key = api_key
