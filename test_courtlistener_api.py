@@ -68,14 +68,29 @@ class CourtListenerAPITester:
                 response_time = time.time() - start_time
                 success = 200 <= status_code < 300
                 
-                # Read response to ensure full request completion
-                await response.read()
+                # Read response to get error details
+                response_text = await response.text()
+                
+                error_msg = ""
+                if not success:
+                    # Try to extract error message from response
+                    try:
+                        import json
+                        error_data = json.loads(response_text)
+                        if 'detail' in error_data:
+                            error_msg = f"HTTP {status_code}: {error_data['detail']}"
+                        elif 'message' in error_data:
+                            error_msg = f"HTTP {status_code}: {error_data['message']}"
+                        else:
+                            error_msg = f"HTTP {status_code}: {response_text[:200]}"
+                    except:
+                        error_msg = f"HTTP {status_code}: {response_text[:200] if response_text else 'No response body'}"
                 
                 return TestResult(
                     status_code=status_code,
                     response_time=response_time,
                     success=success,
-                    error="" if success else f"HTTP {status_code}"
+                    error=error_msg if error_msg else ""
                 )
         except asyncio.TimeoutError:
             return TestResult(
